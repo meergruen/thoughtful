@@ -1,9 +1,9 @@
-package com.example.thoughtful
+package com.meergruen.thoughtful
 
 import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import com.dropbox.core.android.Auth
-import com.example.thoughtful.DropboxClient.init
+import com.meergruen.thoughtful.DropboxClient.init
 
 /**
  * Base class for Activities that require auth tokens

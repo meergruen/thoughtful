@@ -1,5 +1,6 @@
-package com.example.thoughtful
+package com.meergruen.thoughtful
 
+import android.util.Log
 import com.dropbox.core.DbxRequestConfig
 import com.dropbox.core.http.OkHttp3Requestor
 import com.dropbox.core.v2.DbxClientV2
@@ -8,6 +9,8 @@ import com.dropbox.core.v2.DbxClientV2
  * Singleton instance of [DbxClientV2] and friends
  */
 object DropboxClient {
+
+    private val tag = "DropboxClient"
 
     private var sDbxClient: DbxClientV2? = null
     private var sDbxRequestConfig: DbxRequestConfig? = null
@@ -26,8 +29,8 @@ object DropboxClient {
         }
     }
 
-    fun get(): DbxClientV2?{
-        checkNotNull(sDbxClient) { "Client not initialized." }
+    fun get(): DbxClientV2? {
+        Log.i(tag, "Client not inititialized.")
         return sDbxClient
     }
 

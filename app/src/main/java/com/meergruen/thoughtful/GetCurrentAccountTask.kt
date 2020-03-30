@@ -1,4 +1,4 @@
-package com.example.thoughtful
+package com.meergruen.thoughtful
 
 import android.os.AsyncTask
 import com.dropbox.core.DbxException

@@ -1,4 +1,4 @@
-package com.example.thoughtful
+package com.meergruen.thoughtful
 
 import android.os.Bundle
 import android.util.Log
@@ -86,9 +86,8 @@ class MainActivity : DropboxActivity() {
 
 
     private fun uploadFile(title: String, content: String) {
-        mProgressBar!!.visibility = View.VISIBLE
 
-        val obj = object : UploadFileTask.Callback {
+        val uploadBehaviour = object : UploadFileTask.Callback {
             override fun onUploadComplete(result: FileMetadata?) {
 
                 mProgressBar!!.visibility = View.INVISIBLE
@@ -104,14 +103,20 @@ class MainActivity : DropboxActivity() {
 
 
                 Log.e(tag, "Failed to upload file.", e)
-                Toast.makeText(this@MainActivity,
+                Toast.makeText(this@MainActivity, // Short status message to user, no popup
                     "An error has occurred",
                     Toast.LENGTH_SHORT)
                     .show()
             }
         }
 
-        UploadFileTask( DropboxClient.get()!!, obj).execute(title, content)
+        val client = DropboxClient.get()
+        if (client != null) {
+            mProgressBar!!.visibility = View.VISIBLE
+            UploadFileTask( client, uploadBehaviour).execute(title, content)
+        }
+        else {
+            Dialog(this@MainActivity).showInformation("You are not logged in!", "Log in to Dropbox and try again.")
+        }
     }
-
 }

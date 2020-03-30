@@ -1,7 +1,5 @@
-package com.example.thoughtful
+package com.meergruen.thoughtful
 
-import android.content.Context
-import android.net.Uri
 import android.os.AsyncTask
 import android.util.Log
 import com.dropbox.core.DbxException
@@ -12,11 +10,15 @@ import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
 
+import java.util.regex.Pattern;
 
 /**
  * Async task to upload a file to a directory
  */
 internal class UploadFileTask(private val mDbxClient: DbxClientV2, private val mCallback: Callback) : AsyncTask<String?, Void?, FileMetadata?>() {
+
+    private val tag = "UploadFileTask"
+
     private var mException: Exception? = null
 
     interface Callback {
@@ -34,39 +36,21 @@ internal class UploadFileTask(private val mDbxClient: DbxClientV2, private val m
     }
 
 
-    private fun createFileName(title: String): String {
-        var titleAppendix = ""
-
-        if(title.isNotBlank()) {
-            titleAppendix = "-" + title.replace(" ","_" )
-        }
-
-        val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.GERMANY)
-        val date = dateFormat.format(Date())
-
-        Log.i("date", date)
-
-
-        return "/$date$titleAppendix.txt"
-
-    }
-
-
     override fun doInBackground(vararg params: String?): FileMetadata? {
-        val title = params[0]
-        val content = params[1]
+        val title: String = params[0] ?: ""
+        val content = params[1] ?: ""
 
-        val remoteFileName = createFileName(title!!)
-        Log.i("date", remoteFileName)
+        val remoteFileName = createFileName(title)
+        Log.i(tag, remoteFileName)
 
         try {
 
-            val stream = content!!.byteInputStream()
+            val stream = content.byteInputStream()
 
             stream.use { inputStream ->
-                    return mDbxClient.files().uploadBuilder(remoteFileName)
-                            .withMode(WriteMode.OVERWRITE)
-                            .uploadAndFinish(inputStream)
+                return mDbxClient.files().uploadBuilder(remoteFileName)
+                    .withMode(WriteMode.OVERWRITE)
+                    .uploadAndFinish(inputStream)
             }
 
         } catch (e: DbxException) {
@@ -76,5 +60,26 @@ internal class UploadFileTask(private val mDbxClient: DbxClientV2, private val m
         }
         return null
     }
+
+
+    private fun createFileName(title: String): String {
+
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd_HH-mm_", Locale.getDefault()) // Locale.GERMANY
+        val date = dateFormat.format(Date())
+
+        var titleAppendix = ""
+        if(title.isNotBlank()) {
+            titleAppendix = "-" + safeForFileName(title)
+        }
+
+        return "/$date$titleAppendix.txt"
+    }
+
+    private fun safeForFileName(string: String): String {
+        return string
+            .replace("[\\s]+".toRegex(),"_" )
+            .replace("[^\\w-]+".toRegex(), "")
+    }
+
 
 }

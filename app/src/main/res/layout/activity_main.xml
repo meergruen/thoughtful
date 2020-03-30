@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/background"
     tools:context=".MainActivity">
 
     <com.google.android.material.appbar.AppBarLayout
@@ -20,7 +21,6 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-
     <FrameLayout
         android:id="@+id/content"
         android:layout_width="match_parent"
@@ -29,7 +29,6 @@
         <include layout="@layout/content_main" />
 
     </FrameLayout>
-
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab"
