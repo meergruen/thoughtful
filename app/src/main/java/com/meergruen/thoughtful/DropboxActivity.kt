@@ -13,7 +13,7 @@ abstract class DropboxActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        val prefs = getSharedPreferences("dropbox-sample", Context.MODE_PRIVATE)
+        val prefs = getSharedPreferences("dropbox-thoughtful", Context.MODE_PRIVATE)
 
         var accessToken = prefs.getString("access-token", null)
         if (accessToken == null) {
@@ -43,7 +43,7 @@ abstract class DropboxActivity : AppCompatActivity() {
     protected abstract fun loadData()
 
     protected fun hasToken(): Boolean {
-        val prefs = getSharedPreferences("dropbox-sample", Context.MODE_PRIVATE)
+        val prefs = getSharedPreferences("dropbox-thoughtful", Context.MODE_PRIVATE)
         val accessToken = prefs.getString("access-token", null)
         return accessToken != null
 

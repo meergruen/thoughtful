@@ -30,7 +30,9 @@ object DropboxClient {
     }
 
     fun get(): DbxClientV2? {
-        Log.i(tag, "Client not inititialized.")
+        if (sDbxClient == null) {
+            Log.i(tag, "Client not inititialized.")
+        }
         return sDbxClient
     }
 
