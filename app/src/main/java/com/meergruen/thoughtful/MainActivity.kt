@@ -1,5 +1,7 @@
 package com.meergruen.thoughtful
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
@@ -16,28 +18,21 @@ import java.text.DateFormat
 class MainActivity : DropboxActivity() {
 
     private val tag = MainActivity::class.java.name
+    private var preferences: SharedPreferences? = null
     private var mProgressBar: ProgressBar? = null
+    private var mContent: View? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
-
-        send_ab.setOnClickListener { uploadText() }
-
-        //val loginButton = findViewById<Button>(R.id.login_button)
-        //loginButton.setOnClickListener { }
-
-
-      //  val clearButton = findViewById<Button>(R.id.clear_button)
-       // clearButton.setOnClickListener { }
-
+        preferences = getSharedPreferences("thoughtful", Context.MODE_PRIVATE)
+        mContent = findViewById(R.id.content)
         mProgressBar = findViewById(R.id.progressbar)
         mProgressBar!!.visibility = View.INVISIBLE
 
+        send_ab.setOnClickListener { uploadText() }
 
-       // val btn: Button = findViewById(R.id.clear_button)
-       // btn.visibility = View.INVISIBLE
 
     }
 
@@ -52,9 +47,30 @@ class MainActivity : DropboxActivity() {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         return when (item.itemId) {
-            R.id.action_settings -> true
+            R.id.action_change_account -> {
+                login(mContent!!)
+                true
+            }
+            R.id.action_clear_on_send -> {
+                toggleClearOnSend(item)
+                true
+            }
             else -> super.onOptionsItemSelected(item)
         }
+    }
+
+    private fun toggleClearOnSend(item: MenuItem) {
+
+        val clearOnSend = preferences!!.getString("clear-on-send", "true")
+        if (clearOnSend == "true") {
+            preferences!!.edit().putString("clear-on-send", "false").apply()
+            item.setTitle(R.string.clear_on_send)
+        }
+        else{
+            preferences!!.edit().putString("clear-on-send", "true").apply()
+            item.setTitle(R.string.no_clear_on_send)
+        }
+
     }
 
     override fun onResume() {
@@ -118,8 +134,10 @@ class MainActivity : DropboxActivity() {
                         DateFormat.getDateTimeInstance().format(result.clientModified)
                 Toast.makeText(this@MainActivity, message, Toast.LENGTH_SHORT)
                     .show()
-
-                clearFields(thisView)
+                val clearOnSend = preferences!!.getString("clear-on-send", "true")
+                if (clearOnSend == "true") {
+                    clearFields(thisView)
+                }
             }
 
             override fun onError(e: Exception?) {
