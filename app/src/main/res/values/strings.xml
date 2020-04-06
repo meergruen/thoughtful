@@ -5,4 +5,7 @@
     <string name="title_hint">Title</string>
     <string name="app_key">8koez12nqwamh5q</string>
     <string name="login_button">Login with Dropbox</string>
+    <string name="action_change_account">Change Account</string>
+    <string name="clear_button">Clear All</string>
+    <string name="dropbox_account">Dropbox-Account:</string>
 </resources>

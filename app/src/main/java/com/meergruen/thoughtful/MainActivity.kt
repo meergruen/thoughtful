@@ -16,22 +16,28 @@ import java.text.DateFormat
 class MainActivity : DropboxActivity() {
 
     private val tag = MainActivity::class.java.name
-
     private var mProgressBar: ProgressBar? = null
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
 
-        fab.setOnClickListener { uploadText() }
+        send_ab.setOnClickListener { uploadText() }
 
-        val loginButton = findViewById<Button>(R.id.login_button)
-        loginButton.setOnClickListener { startOAuth2Authentication(this@MainActivity, getString(R.string.app_key)) }
+        //val loginButton = findViewById<Button>(R.id.login_button)
+        //loginButton.setOnClickListener { }
+
+
+      //  val clearButton = findViewById<Button>(R.id.clear_button)
+       // clearButton.setOnClickListener { }
 
         mProgressBar = findViewById(R.id.progressbar)
         mProgressBar!!.visibility = View.INVISIBLE
+
+
+       // val btn: Button = findViewById(R.id.clear_button)
+       // btn.visibility = View.INVISIBLE
 
     }
 
@@ -51,6 +57,35 @@ class MainActivity : DropboxActivity() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        if (hasToken()) {
+            findViewById<View>(R.id.login_button).visibility = View.GONE
+            findViewById<View>(R.id.email_text).visibility = View.VISIBLE
+        } else {
+            findViewById<View>(R.id.login_button).visibility = View.VISIBLE
+            findViewById<View>(R.id.email_text).visibility = View.GONE
+        }
+    }
+
+
+    // Button actions
+
+    fun clearFields(v: View) {
+        val titleField: EditText = findViewById(R.id.edit_title)
+        val contentField: EditText = findViewById(R.id.edit_content)
+
+        titleField.setText("")
+        contentField.setText("")
+    }
+
+    fun login(v: View) {
+        startOAuth2Authentication(this@MainActivity, getString(R.string.app_key))
+    }
+
+
+    // Other functions
+
     private fun uploadText() {
         val titleField: EditText = findViewById(R.id.edit_title)
         val contentField: EditText = findViewById(R.id.edit_content)
@@ -58,24 +93,10 @@ class MainActivity : DropboxActivity() {
         uploadFile(titleField.text.toString(), contentField.text.toString())
     }
 
-    override fun onResume() {
-        super.onResume()
-        if (hasToken()) {
-            findViewById<View>(R.id.login_button).visibility = View.GONE
-            findViewById<View>(R.id.email_text).visibility = View.VISIBLE
-            findViewById<View>(R.id.name_text).visibility = View.VISIBLE
-        } else {
-            findViewById<View>(R.id.login_button).visibility = View.VISIBLE
-            findViewById<View>(R.id.email_text).visibility = View.GONE
-            findViewById<View>(R.id.name_text).visibility = View.GONE
-        }
-    }
-
     override fun loadData() {
         GetCurrentAccountTask(DropboxClient.get()!!, object : GetCurrentAccountTask.Callback {
             override fun onComplete(result: FullAccount?) {
                 (findViewById<View>(R.id.email_text) as TextView).text = result!!.email
-                (findViewById<View>(R.id.name_text) as TextView).text = result.name.displayName
             }
 
             override fun onError(e: Exception?) {
@@ -87,14 +108,18 @@ class MainActivity : DropboxActivity() {
 
     private fun uploadFile(title: String, content: String) {
 
+        val thisView: View = findViewById(android.R.id.content)
+
         val uploadBehaviour = object : UploadFileTask.Callback {
             override fun onUploadComplete(result: FileMetadata?) {
 
                 mProgressBar!!.visibility = View.INVISIBLE
-                val message = result!!.name + " size " + result.size + " modified " +
+                val message = result!!.name + " succesfully uploaded " +
                         DateFormat.getDateTimeInstance().format(result.clientModified)
                 Toast.makeText(this@MainActivity, message, Toast.LENGTH_SHORT)
                     .show()
+
+                clearFields(thisView)
             }
 
             override fun onError(e: Exception?) {
@@ -119,4 +144,5 @@ class MainActivity : DropboxActivity() {
             Dialog(this@MainActivity).showInformation("You are not logged in!", "Log in to Dropbox and try again.")
         }
     }
+
 }
