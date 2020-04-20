@@ -64,12 +64,12 @@ internal class UploadFileTask(private val mDbxClient: DbxClientV2, private val m
 
     private fun createFileName(title: String): String {
 
-        val dateFormat = SimpleDateFormat("yyyy-MM-dd_HH-mm_", Locale.getDefault()) // Locale.GERMANY
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd_HH-mm", Locale.getDefault()) // Locale.GERMANY
         val date = dateFormat.format(Date())
 
         var titleAppendix = ""
         if(title.isNotBlank()) {
-            titleAppendix = "-" + safeForFileName(title)
+            titleAppendix = "_" + safeForFileName(title)
         }
 
         return "/$date$titleAppendix.txt"
