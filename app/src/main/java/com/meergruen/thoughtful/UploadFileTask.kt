@@ -10,7 +10,6 @@ import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
 
-import java.util.regex.Pattern;
 
 /**
  * Async task to upload a file to a directory
@@ -34,7 +33,6 @@ internal class UploadFileTask(private val mDbxClient: DbxClientV2, private val m
             else -> mCallback.onUploadComplete(result)
         }
     }
-
 
     override fun doInBackground(vararg params: String?): FileMetadata? {
         val title: String = params[0] ?: ""
@@ -61,7 +59,6 @@ internal class UploadFileTask(private val mDbxClient: DbxClientV2, private val m
         return null
     }
 
-
     private fun createFileName(title: String): String {
 
         val dateFormat = SimpleDateFormat("yyyy-MM-dd_HH-mm", Locale.getDefault()) // Locale.GERMANY
@@ -80,6 +77,5 @@ internal class UploadFileTask(private val mDbxClient: DbxClientV2, private val m
             .replace("[\\s]+".toRegex(),"_" )
             .replace("[^\\w-]+".toRegex(), "")
     }
-
 
 }
